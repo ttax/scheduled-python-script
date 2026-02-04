@@ -2,7 +2,7 @@ name: 定时运行基金钉钉通知脚本
 
 on:
   schedule:
-        - cron: '50 9-15 * * *'
+        - cron: '50 1-7 * * *'
   # 手动触发（测试用）
   workflow_dispatch:
 
