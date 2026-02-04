@@ -1,9 +1,6 @@
-# 工作流名称
 name: 定时运行基金钉钉通知脚本
 
-# 触发规则：每天9点-15点每小时50分 + 手动触发
 on:
-  # 定时触发（显式指定时区为北京时间，避免偏移）
   schedule:
         - cron: '50 9-15 * * *'
   # 手动触发（测试用）
@@ -16,21 +13,17 @@ jobs:
     # 配置环境变量（存放钉钉机器人Token，避免硬编码）
     env:
       DINGTALK_WEBHOOK: ${{ secrets.DINGTALK_WEBHOOK }}
-      # 可选：指定基金代码文件路径（确保和脚本同目录）
       FUND_CODES_FILE: ./fund_codes.txt
 
     steps:
-      # 步骤1：拉取仓库代码（确保包含 script.py 和 fund_codes.txt）
       - name: 拉取仓库代码
         uses: actions/checkout@v4
 
-      # 步骤2：验证文件是否存在（调试用，可选）
       - name: 检查文件是否存在
         run: |
           ls -la  # 列出根目录文件，确认 script.py 和 fund_codes.txt 存在
           cat $FUND_CODES_FILE  # 打印基金代码文件内容，验证读取权限
 
-      # 步骤3：设置Python环境
       - name: 设置Python环境
         uses: actions/setup-python@v5
         with:
