@@ -1,42 +1,46 @@
 # 工作流名称
-name: 定时运行Python脚本
+name: 定时运行基金钉钉通知脚本
 
-# 触发规则：定时触发 + 手动触发（方便测试）
+# 触发规则：每小时定时触发 + 手动触发
 on:
-  # 定时触发，使用 cron 表达式（UTC 时间）
+  # 定时触发（UTC时间，每小时的第0分钟运行，对应北京时间每小时8分0秒）
   schedule:
-    # 示例：每天 UTC 时间 0 点（对应北京时间 8 点）运行
-    - cron: '0 0 * * *'
-  # 手动触发（在 GitHub 页面点击运行）
+    - cron: '0 * * * *'
+  # 手动触发（测试用）
   workflow_dispatch:
 
-# 要执行的任务
+# 任务配置
 jobs:
-  run-python-script:
-    # 运行的操作系统环境（推荐 ubuntu-latest）
+  run-fund-script:
     runs-on: ubuntu-latest
-    
+    # 配置环境变量（存放钉钉机器人Token，避免硬编码）
+    env:
+      DINGTALK_WEBHOOK: ${{ secrets.DINGTALK_WEBHOOK }}
+
     steps:
-      # 步骤1：拉取仓库代码到运行环境
+      # 步骤1：拉取仓库代码
       - name: 拉取仓库代码
         uses: actions/checkout@v4
 
-      # 步骤2：设置 Python 环境
+      # 步骤2：设置Python环境
       - name: 设置Python环境
         uses: actions/setup-python@v5
         with:
-          # 指定Python版本，根据你的脚本需求调整
           python-version: '3.10'
-          # 缓存依赖，加速后续运行
           cache: 'pip'
 
-      # 步骤3：安装脚本依赖（如果有）
+      # 步骤3：安装依赖（你的脚本需要requests库）
       - name: 安装依赖
         run: |
           python -m pip install --upgrade pip
-          # 如果有 requirements.txt，执行下面的命令
-          # pip install -r requirements.txt
+          pip install requests  # 明确安装requests（你的脚本依赖它）
 
-      # 步骤4：执行Python脚本
-      - name: 运行Python脚本
+      # 步骤4：修改脚本中的Webhook（替换为环境变量）
+      - name: 替换脚本中的钉钉Webhook
+        run: |
+          # 将脚本中硬编码的DINGTALK_WEBHOOK替换为环境变量
+          sed -i "s|DINGTALK_WEBHOOK = \".*\"|DINGTALK_WEBHOOK = \"$DINGTALK_WEBHOOK\"|" script.py
+
+      # 步骤5：执行脚本
+      - name: 运行基金通知脚本
         run: python script.py
