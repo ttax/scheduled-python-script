@@ -5,9 +5,7 @@ name: 定时运行基金钉钉通知脚本
 on:
   # 定时触发（显式指定时区为北京时间，避免偏移）
   schedule:
-    - cron: '50 1-7 * * *'  # UTC 1:50-7:50 = 北京时间 9:50-15:50
-    # 可选：添加时区声明（GitHub Actions 新版支持）
-    timezone: Asia/Shanghai
+        - cron: '50 1-7 * * *'  # UTC 1:50-7:50 = 北京时间 9:50-15:50
   # 手动触发（测试用）
   workflow_dispatch:
 
