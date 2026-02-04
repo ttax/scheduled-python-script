@@ -1,0 +1,42 @@
+# 工作流名称
+name: 定时运行Python脚本
+
+# 触发规则：定时触发 + 手动触发（方便测试）
+on:
+  # 定时触发，使用 cron 表达式（UTC 时间）
+  schedule:
+    # 示例：每天 UTC 时间 0 点（对应北京时间 8 点）运行
+    - cron: '0 0 * * *'
+  # 手动触发（在 GitHub 页面点击运行）
+  workflow_dispatch:
+
+# 要执行的任务
+jobs:
+  run-python-script:
+    # 运行的操作系统环境（推荐 ubuntu-latest）
+    runs-on: ubuntu-latest
+    
+    steps:
+      # 步骤1：拉取仓库代码到运行环境
+      - name: 拉取仓库代码
+        uses: actions/checkout@v4
+
+      # 步骤2：设置 Python 环境
+      - name: 设置Python环境
+        uses: actions/setup-python@v5
+        with:
+          # 指定Python版本，根据你的脚本需求调整
+          python-version: '3.10'
+          # 缓存依赖，加速后续运行
+          cache: 'pip'
+
+      # 步骤3：安装脚本依赖（如果有）
+      - name: 安装依赖
+        run: |
+          python -m pip install --upgrade pip
+          # 如果有 requirements.txt，执行下面的命令
+          # pip install -r requirements.txt
+
+      # 步骤4：执行Python脚本
+      - name: 运行Python脚本
+        run: python script.py
