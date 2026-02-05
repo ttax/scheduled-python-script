@@ -90,7 +90,7 @@ def send_to_dingtalk(content):
     data = {
         "msgtype": "markdown",
         "markdown": {
-            "title": "📊 基金净值实时更新",
+            "title": "来财来财啦",
             "text": content
         }
     }
