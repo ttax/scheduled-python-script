@@ -2,29 +2,26 @@ name: 定时运行基金钉钉通知脚本
 
 on:
   schedule:
-    # 每天 UTC 0:50~7:50 (北京时间 8:50~15:50) 每小时 50 分执行
     - cron: '50 0-7 * * *'
-  workflow_dispatch:  # 手动触发（测试用）
+  workflow_dispatch:
 
-# 任务配置
 jobs:
   run-fund-script:
     runs-on: ubuntu-latest
-    # 配置环境变量（存放钉钉机器人Token，避免硬编码）
     env:
       DINGTALK_WEBHOOK: ${{ secrets.DINGTALK_WEBHOOK }}
       FUND_CODES_FILE: ./fund_codes.txt
 
     steps:
-      - name: 拉取仓库代码
+      - name: 拉取代码
         uses: actions/checkout@v4
 
-      - name: 检查文件是否存在
+      - name: 检查文件
         run: |
-          ls -la  # 列出根目录文件，确认 script.py 和 fund_codes.txt 存在
-          cat $FUND_CODES_FILE  # 打印基金代码文件内容，验证读取权限
+          ls -la
+          cat $FUND_CODES_FILE
 
-      - name: 设置Python环境
+      - name: 安装 Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.10'
@@ -35,6 +32,6 @@ jobs:
           python -m pip install --upgrade pip
           pip install requests
 
-      - name: 运行基金通知脚本
+      - name: 运行脚本
         run: python script.py
-        timeout-minutes: 3600
+        timeout-minutes: 5
